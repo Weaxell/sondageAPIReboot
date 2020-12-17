@@ -27,10 +27,8 @@ public class SalleSondage {
     private List<Integer> listUtilisateurs;
 
     public SalleSondage() {
-        /*
         if(listUtilisateurs == null)
             listUtilisateurs = new ArrayList<Integer>();
-         */
     }
 
     public int getIdProprietaire() {
@@ -57,7 +55,7 @@ public class SalleSondage {
         this.nom = nom;
     }
 
-    public List<Integer> getListSondage() {
+    public List<Integer> getListIdSondage() {
         return listSondage;
     }
 
@@ -72,7 +70,8 @@ public class SalleSondage {
     public void addUser(int userid) {
         if(listUtilisateurs == null)
             listUtilisateurs = new ArrayList<Integer>();
-        listUtilisateurs.add(userid);
+        if(!listUtilisateurs.contains(userid))
+            listUtilisateurs.add(userid);
     }
 
     @Override

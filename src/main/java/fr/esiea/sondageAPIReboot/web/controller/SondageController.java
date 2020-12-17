@@ -2,8 +2,8 @@ package fr.esiea.sondageAPIReboot.web.controller;
 
 import fr.esiea.sondageAPIReboot.dao.SalleDao;
 import fr.esiea.sondageAPIReboot.dao.SondageDao;
-import fr.esiea.sondageAPIReboot.dao.UtilisateurDao;
 import fr.esiea.sondageAPIReboot.model.Sondage;
+import fr.esiea.sondageAPIReboot.web.exceptions.ForbiddenException;
 import fr.esiea.sondageAPIReboot.web.exceptions.NotFoundException;
 import fr.esiea.sondageAPIReboot.web.exceptions.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +17,6 @@ import java.util.List;
 public class SondageController {
     @Autowired
     SondageDao sondageDao;
-    @Autowired
-    UtilisateurDao utilisateurDao;
     @Autowired
     SalleDao salleDao;
 
@@ -52,12 +50,8 @@ public class SondageController {
         if(sondage != null) {
             if(sondage.isPublic())
                 return sondage;
-            // sinon, si l'utilisateur n'existe pas
-            else if(utilisateurDao.findById(userid) == null) {
-                throw new UnauthorizedException("L'utilisateur " + userid + " n'existe pas");
-            }
-            // sinon, si l'utilisateur existe et si l'utilisateur a acces a la salle ou est le sondage
-            else if(utilisateurDao.findById(userid) != null && utilisateurDao.findById(userid).getListSalles().contains(sondage.getSalleId())) {
+            // sinon, si l'utilisateur a acces a la salle ou est le sondage
+            else if(salleDao.findById(sondage.getSalleId()).getListUtilisateurs() != null && salleDao.findById(sondage.getSalleId()).getListUtilisateurs().contains(userid)) {
                 return sondage;
             }
         }
@@ -77,8 +71,10 @@ public class SondageController {
     @PostMapping(value = "/sondages")
     public void addSondage(@Valid @RequestBody Sondage sondage, @RequestParam("userid") int userid) {
         sondage.setIdProprietaire(userid);
-        if(sondage.isPublic())
+        if(sondage.isPublic()) {
+            sondage.setIdSalle(-1);
             sondageDao.save(sondage);
+        }
         else if(salleDao.findById(sondage.getSalleId()) != null) {
             if(salleDao.findById(sondage.getSalleId()).getListUtilisateurs().contains(userid))
                 sondageDao.save(sondage);
@@ -90,9 +86,14 @@ public class SondageController {
     @PutMapping(value = "/sondages")
     public void modifierSondage(@Valid @RequestBody Sondage sondage, @RequestParam("userid") int userid) {
         sondage.setIdProprietaire(userid);
-        if(sondage.isPublic())
-            sondageDao.save(sondage);
-        else if(utilisateurDao.findById(userid).getListSalles().contains(sondage.getSalleId())) {
+        // seulement le proprietaire peut changer le sondage public
+        if(sondage.isPublic()) {
+            if(sondage.getIdProprietaire() == userid)
+                sondageDao.save(sondage);
+            else
+                throw new ForbiddenException("Vous n'etes pas le proprietaire de ce sondage.");
+        }
+        else if(salleDao.findById(sondage.getSalleId()).getListUtilisateurs() != null && salleDao.findById(sondage.getSalleId()).getListUtilisateurs().contains(userid)) {
             Sondage sond = sondageDao.save(sondage);
             salleDao.findById(sond.getSalleId()).addSondage(sond.getId());
         }

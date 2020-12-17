@@ -2,10 +2,8 @@ package fr.esiea.sondageAPIReboot.web.controller;
 
 import fr.esiea.sondageAPIReboot.dao.SalleDao;
 import fr.esiea.sondageAPIReboot.dao.SondageDao;
-import fr.esiea.sondageAPIReboot.dao.UtilisateurDao;
 import fr.esiea.sondageAPIReboot.model.SalleSondage;
 import fr.esiea.sondageAPIReboot.model.Sondage;
-import fr.esiea.sondageAPIReboot.model.Utilisateur;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +19,6 @@ public class SalleController {
     @Autowired
     SalleDao salleDao;
     @Autowired
-    UtilisateurDao utilisateurDao;
-    @Autowired
     SondageDao sondageDao;
 
     /**
@@ -36,12 +32,11 @@ public class SalleController {
 
         // System.out.println("################ Userid: " + userid);
 
-        Utilisateur utilisateur = null;
-        utilisateur = utilisateurDao.findById(userid);
-
-        for(SalleSondage salle : salleDao.findAll()) {
-            if(salle.getListUtilisateurs().contains(userid))
-                listSalles.add(salle);
+        for(SalleSondage sallesond : salleDao.findAll()) {
+            if(sallesond.getListUtilisateurs() != null) {
+                if(sallesond.getListUtilisateurs().contains(userid))
+                    listSalles.add(sallesond);
+            }
         }
 
         return listSalles;
@@ -57,10 +52,10 @@ public class SalleController {
     public List<Sondage> getSondagesOfSalle(@PathVariable int id, @RequestParam("userid") int userid) {
         List<Sondage> listSondages = new ArrayList<Sondage>();
 
-        if(utilisateurDao.findById(userid).getListSalles().contains(id) == true) {
-            for(int idSondage : salleDao.findById(id).getListSondage())
-                listSondages.add(sondageDao.findById(idSondage));
-        }
+        if(salleDao.findById(id) != null)
+            if(salleDao.findById(id).getListUtilisateurs() != null && salleDao.findById(id).getListUtilisateurs().contains(userid))
+                for(int idsond : salleDao.findById(id).getListIdSondage())
+                    listSondages.add(sondageDao.findById(idsond));
 
         return listSondages;
     }
@@ -74,6 +69,11 @@ public class SalleController {
     @PostMapping(value = "/salles")
     public ResponseEntity<Void> addSalle(@Valid @RequestBody SalleSondage salleSondage, @RequestParam("userid") int userid) {
         salleSondage.setIdProprietaire(userid);
+
+        // initalisation des champs ElementCollection
+        salleSondage.setListUtilisateurs(new ArrayList<Integer>());
+        salleSondage.setListSondage(new ArrayList<Integer>());
+
         salleSondage.addUser(userid);
         SalleSondage salleAdded = salleDao.save(salleSondage);
 
@@ -89,12 +89,20 @@ public class SalleController {
         return ResponseEntity.created(location).build();
     }
 
-    @PostMapping(value = "/salles/{id}")
-    public void adduser(@Valid @RequestBody SalleSondage salleSondage, @RequestParam("userid") int userid, @RequestParam("userid") int useraddid) {
-        if(salleDao.findById(salleSondage.getId()).getListUtilisateurs().contains(userid)) {
-            SalleSondage salle = salleDao.findById(salleSondage.getId());
-            salle.addUser(useraddid);
-            salleDao.save(salleSondage);
+    /**
+     * Permet d'ajouter un utilisateur dans une salle
+     * @param salleId
+     * @param userid
+     * @param userid, useradd
+     */
+    @PostMapping(value = "/salles/{salleId}/adduser")
+    public void adduser(@PathVariable int salleId, @RequestParam("userid") int userid, @RequestParam("useradd") int useradd) {
+        // int idSalle = Integer.valueOf(salleId.charAt(0));
+        int idSalle = salleId;
+        if(salleDao.findById(idSalle).getListUtilisateurs().contains(userid)) {
+            SalleSondage salle = salleDao.findById(idSalle);
+            salle.addUser(useradd);
+            salleDao.save(salle);
         }
     }
 }
