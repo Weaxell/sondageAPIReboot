@@ -26,7 +26,7 @@ public class SalleController {
      * @param userid
      * @return dans une liste toutes les salles auxquelles l'utilisateur a acces
      */
-    @GetMapping(value = "/salles")
+    @GetMapping(value = "/salles/my")
     public List<SalleSondage> listSalles(@RequestParam("userid") int userid) {
         List<SalleSondage> listSalles = new ArrayList<SalleSondage>();
 
@@ -46,7 +46,7 @@ public class SalleController {
      *
      * @param id
      * @param userid
-     * @return tous les sondages de la salle dans une liste si l'utilisateur possede un acces a cette salle
+     * @return tous les sondages de la salle dans une liste si l'utilisateur a acces a cette salle
      */
     @GetMapping(value = "/salles/{id}")
     public List<Sondage> getSondagesOfSalle(@PathVariable int id, @RequestParam("userid") int userid) {

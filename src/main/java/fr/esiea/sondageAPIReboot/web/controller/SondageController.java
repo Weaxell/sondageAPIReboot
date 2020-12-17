@@ -2,6 +2,7 @@ package fr.esiea.sondageAPIReboot.web.controller;
 
 import fr.esiea.sondageAPIReboot.dao.SalleDao;
 import fr.esiea.sondageAPIReboot.dao.SondageDao;
+import fr.esiea.sondageAPIReboot.model.SalleSondage;
 import fr.esiea.sondageAPIReboot.model.Sondage;
 import fr.esiea.sondageAPIReboot.web.exceptions.ForbiddenException;
 import fr.esiea.sondageAPIReboot.web.exceptions.NotFoundException;
@@ -20,11 +21,16 @@ public class SondageController {
     @Autowired
     SalleDao salleDao;
 
+
+    /*
+    ============ DEBUT MAPPING GET ============
+     */
+
     /**
      *
      * @return tous les sondages publics
      */
-    @GetMapping(value = "/sondages")
+    @GetMapping(value = "/sondages/public")
     public List<Sondage> listSondages() {
         List<Sondage> sondageList = new ArrayList<Sondage>();
 
@@ -42,24 +48,32 @@ public class SondageController {
      * @param userid
      * @return un sondage specifique en fonction de son id
      */
-    @GetMapping(value = "/sondage/{id}")
+    @GetMapping(value = "/sondages/{id}")
     public Sondage getSondage(@PathVariable int id, @RequestParam("userid") int userid) {
         Sondage sondage = sondageDao.findById(id);
-
-        // si le sondage est public
+        // si le sondage existe
         if(sondage != null) {
             if(sondage.isPublic())
                 return sondage;
             // sinon, si l'utilisateur a acces a la salle ou est le sondage
-            else if(salleDao.findById(sondage.getSalleId()).getListUtilisateurs() != null && salleDao.findById(sondage.getSalleId()).getListUtilisateurs().contains(userid)) {
+            else if(salleDao.findById(sondage.getSalleId()).getListUtilisateurs().contains(userid)) {
+                System.out.println("################### Utilisateur " + userid + "dans la liste : " + salleDao.findById(sondage.getSalleId()).getListUtilisateurs().contains(userid));
                 return sondage;
             }
         }
         else {
             throw new NotFoundException("Le sondage d'id " + id + " n'existe pas");
         }
-        return sondage;
+        throw new NotFoundException("Le sondage d'id " + id + " n'existe pas");
     }
+    /*
+    ============ FIN MAPPING GET ============
+     */
+
+
+    /*
+    ============ DEBUT MAPPING POST ============
+     */
 
     /**
      * CREATION DE SONDAGE
@@ -67,7 +81,6 @@ public class SondageController {
      * @param sondage
      * @param userid
      */
-
     @PostMapping(value = "/sondages")
     public void addSondage(@Valid @RequestBody Sondage sondage, @RequestParam("userid") int userid) {
         sondage.setIdProprietaire(userid);
@@ -83,20 +96,26 @@ public class SondageController {
             throw new UnauthorizedException("Action non autorisee");
     }
 
+    @PostMapping(value = "/salles/{idSalle}/newSondage")
+    public void addSondagePrive(@PathVariable int salleId, @Valid @RequestBody Sondage sondage, @RequestParam("userid") int userid) {
+        SalleSondage salle = salleDao.findById(salleId);
+        if(salle != null) {
+            if(salle.getListUtilisateurs().contains(userid))
+                sondageDao.save(sondage);
+        }
+        else
+            throw new UnauthorizedException("Vous n'avez pas acces a cette salle");
+    }
+    /*
+    ============ FIN MAPPING POST ============
+     */
+
     @PutMapping(value = "/sondages")
     public void modifierSondage(@Valid @RequestBody Sondage sondage, @RequestParam("userid") int userid) {
         sondage.setIdProprietaire(userid);
         // seulement le proprietaire peut changer le sondage public
-        if(sondage.isPublic()) {
-            if(sondage.getIdProprietaire() == userid)
-                sondageDao.save(sondage);
-            else
-                throw new ForbiddenException("Vous n'etes pas le proprietaire de ce sondage.");
-        }
-        else if(salleDao.findById(sondage.getSalleId()).getListUtilisateurs() != null && salleDao.findById(sondage.getSalleId()).getListUtilisateurs().contains(userid)) {
-            Sondage sond = sondageDao.save(sondage);
-            salleDao.findById(sond.getSalleId()).addSondage(sond.getId());
-        }
+        if (sondage.getIdProprietaire() == userid)
+            sondageDao.save(sondage);
         else
             throw new UnauthorizedException("Action non autorisee");
     }
