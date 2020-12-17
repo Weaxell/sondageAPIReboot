@@ -4,7 +4,6 @@ import fr.esiea.sondageAPIReboot.dao.SalleDao;
 import fr.esiea.sondageAPIReboot.dao.SondageDao;
 import fr.esiea.sondageAPIReboot.model.SalleSondage;
 import fr.esiea.sondageAPIReboot.model.Sondage;
-import fr.esiea.sondageAPIReboot.web.exceptions.ForbiddenException;
 import fr.esiea.sondageAPIReboot.web.exceptions.NotFoundException;
 import fr.esiea.sondageAPIReboot.web.exceptions.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,14 +96,18 @@ public class SondageController {
     }
 
     @PostMapping(value = "/salles/{idSalle}/newSondage")
-    public void addSondagePrive(@PathVariable int salleId, @Valid @RequestBody Sondage sondage, @RequestParam("userid") int userid) {
-        SalleSondage salle = salleDao.findById(salleId);
+    public void addSondagePrive(@PathVariable int idSalle, @Valid @RequestBody Sondage sondage, @RequestParam("userid") int userid) {
+        SalleSondage salle = salleDao.findById(idSalle);
         if(salle != null) {
-            if(salle.getListUtilisateurs().contains(userid))
+            if(salle.getListUtilisateurs().contains(userid)) {
+                sondage.setIdSalle(idSalle);
                 sondageDao.save(sondage);
+            }
+            else
+                throw new UnauthorizedException("L'utilisateur " + userid + " n'a pas acces a la salle");
         }
         else
-            throw new UnauthorizedException("Vous n'avez pas acces a cette salle");
+            throw new NotFoundException("Tentative d'acces a une salle qui n'existe pas");
     }
     /*
     ============ FIN MAPPING POST ============
