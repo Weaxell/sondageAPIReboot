@@ -25,6 +25,7 @@ public class VoteController {
     @Autowired
     VoteDao voteDao;
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(value = "/sondages/{idSondage}/hasvoted")
     public Map<String, Boolean> hasvoted(@PathVariable int idSondage, @RequestParam String userid) {
         HashMap<String, Boolean> mapHasVoted = new HashMap<String, Boolean>();
@@ -39,6 +40,7 @@ public class VoteController {
         return mapHasVoted;
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(value = "/sondages/{idSondage}/voted")
     public ResultatSondage getSondageResultat(@PathVariable int idSondage, @RequestParam String userid) {
         ResultatSondage resulatSondage = new ResultatSondage();
@@ -73,6 +75,7 @@ public class VoteController {
 
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping(value = "/sondages/{idSondage}/vote")
     public void voteSondage(@PathVariable int idSondage, @RequestParam String userid, @RequestParam String choixReponse) {
         Sondage sondage = sondageDao.findById(idSondage);
@@ -96,19 +99,5 @@ public class VoteController {
                 }
             }
         }
-        // on verifie que le sondage existe
-        /*
-        if(sondage != null) {
-            SalleSondage salle = salleDao.findById(sondage.getSalleId());
-            if(((salle != null && salle.getListUtilisateurs().contains(userid)) || sondage.isPublic() == true) && sondage.getReponses().contains(choixReponse)) {
-                voteDao.save(new Vote(idSondage, choixReponse, userid));
-            }
-            else
-                throw new BadRequestException("Sondage non accessible au vote de l'utilisateur ou vote incorrect");
-        }
-        else
-            throw new NotFoundException("Le sondage demande n'existe pas");
-         */
-
     }
 }
