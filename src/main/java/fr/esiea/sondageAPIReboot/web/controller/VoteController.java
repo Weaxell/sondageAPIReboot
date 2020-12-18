@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -42,7 +43,7 @@ public class VoteController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(value = "/sondages/{idSondage}/voted")
-    public ResultatSondage getSondageResultat(@PathVariable int idSondage, @RequestParam String userid) {
+    public List<String> getSondageResultat(@PathVariable int idSondage, @RequestParam String userid) {
         if(sondageDao.findById(idSondage) != null ) {
             ResultatSondage resulatSondage = new ResultatSondage(sondageDao.findById(idSondage).getReponses());
 
@@ -72,7 +73,7 @@ public class VoteController {
                 }
             }
 
-            return resulatSondage;
+            return resulatSondage.getResultatEnliste();
         }
         else
             throw new NotFoundException("Le sondage demande n'existe pas");

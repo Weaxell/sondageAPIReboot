@@ -1,8 +1,6 @@
 package fr.esiea.sondageAPIReboot.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class ResultatSondage {
     HashMap<String, Integer> mapResulat;
@@ -26,5 +24,18 @@ public class ResultatSondage {
 
     public HashMap<String, Integer> getResultat() {
         return mapResulat;
+    }
+
+    public ArrayList<String> getResultatEnliste() {
+        ArrayList<String> listRes = new ArrayList<String>();
+
+        Iterator it = mapResulat.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            listRes.add(pair.getKey().toString());
+            listRes.add(pair.getValue().toString());
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+        return listRes;
     }
 }
