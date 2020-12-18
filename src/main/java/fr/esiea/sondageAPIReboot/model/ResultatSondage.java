@@ -10,9 +10,11 @@ public class ResultatSondage {
     }
 
     public void ajouterResultat(String choix, int nbVote) {
+        // si la valeur exiset deja on incremente le nb de votes pour cette valeur
         if(mapResulat.containsKey(choix)) {
             mapResulat.put(choix, mapResulat.get(choix)+1);
         }
+        // sinon on cree cette valeur
         else {
             mapResulat.put(choix, nbVote);
         }

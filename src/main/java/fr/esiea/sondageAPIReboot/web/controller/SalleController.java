@@ -23,6 +23,11 @@ public class SalleController {
     @Autowired
     SondageDao sondageDao;
 
+
+    /*
+    ============ DEBUT MAPPING GET ============
+     */
+
     /**
      *
      * @param userid
@@ -69,6 +74,16 @@ public class SalleController {
         else
             throw new NotFoundException("La salle demandee n'existe pas");
     }
+
+    /*
+    ============ FIN MAPPING GET ============
+     */
+
+
+
+    /*
+    ============ DEBUT MAPPING POST ============
+     */
 
     /**
      * Pemret a un utilisateur de creer une salle, il en devient le peoprietaire
@@ -123,4 +138,8 @@ public class SalleController {
             throw new NotFoundException("Cette salle n'existe pas");
 
     }
+
+    /*
+    ============ FIN MAPPING POST ============
+     */
 }

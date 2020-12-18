@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +67,19 @@ public class SondageController {
         else {
             throw new NotFoundException("Le sondage d'id " + id + " n'existe pas");
         }
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping(value = "/sondages/my")
+    public List<Sondage> getMesSondages(@RequestParam String userid) {
+        ArrayList<Sondage> listMesSondages = new ArrayList<Sondage>();
+
+        for(Sondage sondage : sondageDao.findAll()) {
+            if(sondage.getIdProprietaire().equals(userid))
+                listMesSondages.add(sondage);
+        }
+
+        return listMesSondages;
     }
     /*
     ============ FIN MAPPING GET ============
