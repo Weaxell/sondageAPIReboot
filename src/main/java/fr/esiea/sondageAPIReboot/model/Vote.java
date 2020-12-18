@@ -12,7 +12,18 @@ public class Vote {
     private int id;
     private int idSondage;
     private String choix;
-    private int idUtilisateur;
+    private String idUtilisateur;
+
+    public Vote() {
+    }
+
+    public Vote(int idSondage, String choix, String idUtilisateur) {
+        this.idSondage = idSondage;
+        this.choix = choix;
+        this.idUtilisateur = idUtilisateur;
+    }
+
+
 
     public int getId() {
         return id;
@@ -38,11 +49,11 @@ public class Vote {
         this.choix = choix;
     }
 
-    public int getIdUtilisateur() {
+    public String getIdUtilisateur() {
         return idUtilisateur;
     }
 
-    public void setIdUtilisateur(int idUtilisateur) {
+    public void setIdUtilisateur(String idUtilisateur) {
         this.idUtilisateur = idUtilisateur;
     }
 }
