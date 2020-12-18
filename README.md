@@ -1,4 +1,5 @@
 
+Simon Ledoit, Thomas Carpentier -- 4A-UFA-42
 # Partie back : API pour le projet de programmation Web
 
 Ce repository supporte le code de notre API RESTful qui est appelée par notre front en Angular. Elle interprète les requêtes HTTP et fait passer les données par le format JSON. Elle est également interfacée avec une base de données pour permettre la persistance des données.
