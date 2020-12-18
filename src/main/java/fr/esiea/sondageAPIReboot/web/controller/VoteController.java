@@ -13,6 +13,9 @@ import fr.esiea.sondageAPIReboot.web.exceptions.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 public class VoteController {
     @Autowired
@@ -21,6 +24,20 @@ public class VoteController {
     SondageDao sondageDao;
     @Autowired
     VoteDao voteDao;
+
+    @GetMapping(value = "/sondages/{idSondage}/hasvoted")
+    public Map<String, Boolean> hasvoted(@PathVariable int idSondage, @RequestParam String userid) {
+        HashMap<String, Boolean> mapHasVoted = new HashMap<String, Boolean>();
+
+        for(Vote vote : voteDao.findAll()) {
+            if(vote.getIdUtilisateur().equals(userid) && vote.getIdSondage() == idSondage) {
+                mapHasVoted.put(userid, true);
+                return mapHasVoted;
+            }
+        }
+        mapHasVoted.put(userid, false);
+        return mapHasVoted;
+    }
 
     @GetMapping(value = "/sondages/{idSondage}/voted")
     public ResultatSondage getSondageResultat(@PathVariable int idSondage, @RequestParam String userid) {
