@@ -28,6 +28,7 @@ public class SalleController {
      * @param userid
      * @return dans une liste toutes les salles auxquelles l'utilisateur a acces
      */
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(value = "/salles/my")
     public List<SalleSondage> listSalles(@RequestParam("userid") String userid) {
         List<SalleSondage> listSalles = new ArrayList<SalleSondage>();
@@ -48,6 +49,7 @@ public class SalleController {
      * @param userid
      * @return tous les sondages de la salle dans une liste si l'utilisateur a acces a cette salle
      */
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(value = "/salles/{salleId}")
     public List<Sondage> getSondagesOfSalle(@PathVariable int salleId, @RequestParam("userid") String userid) {
         List<Sondage> listSondages = new ArrayList<Sondage>();
@@ -74,6 +76,7 @@ public class SalleController {
      * @param userid
      * @return
      */
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping(value = "/salles")
     public ResponseEntity<Void> addSalle(@Valid @RequestBody SalleSondage salleSondage, @RequestParam("userid") String userid) {
         salleSondage.setIdProprietaire(userid);
@@ -103,6 +106,7 @@ public class SalleController {
      * @param userid
      * @param userid, useradd
      */
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping(value = "/salles/{salleId}/adduser")
     public void adduser(@PathVariable int salleId, @RequestParam("userid") String userid, @RequestParam("useradd") String useradd) {
         int idSalle = salleId;

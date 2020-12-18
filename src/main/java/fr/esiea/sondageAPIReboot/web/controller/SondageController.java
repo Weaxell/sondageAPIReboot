@@ -29,6 +29,7 @@ public class SondageController {
      *
      * @return tous les sondages publics
      */
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(value = "/sondages/public")
     public List<Sondage> listSondages() {
         List<Sondage> sondageList = new ArrayList<Sondage>();
@@ -47,6 +48,7 @@ public class SondageController {
      * @param userid
      * @return un sondage specifique en fonction de son id
      */
+    @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(value = "/sondages/{id}")
     public Sondage getSondage(@PathVariable int id, @RequestParam("userid") String userid) {
         Sondage sondage = sondageDao.findById(id);
@@ -80,6 +82,7 @@ public class SondageController {
      * @param sondage
      * @param userid
      */
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping(value = "/sondages")
     public void addSondage(@Valid @RequestBody Sondage sondage, @RequestParam("userid") String userid) {
         sondage.setIdProprietaire(userid);
@@ -95,6 +98,7 @@ public class SondageController {
             throw new UnauthorizedException("Action non autorisee");
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping(value = "/salles/{idSalle}/newSondage")
     public void addSondagePrive(@PathVariable int idSalle, @Valid @RequestBody Sondage sondage, @RequestParam("userid") String userid) {
         SalleSondage salle = salleDao.findById(idSalle);
@@ -122,6 +126,7 @@ public class SondageController {
     ============ DEBUT MAPPINGS PLUS PARTICULIERS (A USAGE UNIQUE, ETC... ============
      */
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @DeleteMapping(value="/sondages/{id}")
     public void effacerSondage(@Valid @RequestBody Sondage sondage, @RequestParam("userid") String userid) {
         Sondage sond = sondageDao.findById(sondage.getId());
@@ -139,6 +144,8 @@ public class SondageController {
             throw new NotFoundException("Le sondage demande n'existe pas");
     }
 
+
+    @CrossOrigin(origins = "http://localhost:4200")
     @PutMapping(value = "/sondages")
     public void modifierSondage(@Valid @RequestBody Sondage sondage, @RequestParam("userid") String userid) {
         sondage.setIdProprietaire(userid);
