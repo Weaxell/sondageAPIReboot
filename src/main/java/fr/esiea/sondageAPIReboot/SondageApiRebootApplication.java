@@ -23,15 +23,28 @@ public class SondageApiRebootApplication {
 	@Bean
 	public CommandLineRunner demo(SalleDao salleDao, SondageDao sondageDao) {
 		return (args) -> {
-			// deux salles
+			// cinq salles
 			if(salleDao.findAll().size() < 2) {
-				SalleSondage salle1 = new SalleSondage("Salle de Simon", "simon");
+				SalleSondage salle1 = new SalleSondage("Salle de Simon (1)", "simon");
 				salle1.addUser("simon");
 				SalleSondage salle1added = salleDao.save(salle1);
 
-				SalleSondage salle2 = new SalleSondage("Salle d'Edward", "edward");
+				SalleSondage salle2 = new SalleSondage("Salle d'Edward (2)", "edward");
 				salle2.addUser("edward");
 				SalleSondage salle2added = salleDao.save(salle2);
+
+				SalleSondage salle3 = new SalleSondage("Troisieme salle", "thomas");
+				salle3.addUser("thomas");
+				SalleSondage salle3added = salleDao.save(salle3);
+
+				SalleSondage salle4 = new SalleSondage("Quatrieme salle, la 2eme d'edward", "edward");
+				salle4.addUser("edward");
+				SalleSondage salle4added = salleDao.save(salle4);
+
+				SalleSondage salle5 = new SalleSondage("Cinquieme salle", "homonculus");
+				salle5.addUser("homonculus");
+				SalleSondage salle54added = salleDao.save(salle5);
+
 
 				// quatre sondages
 				// deux sondages publics
