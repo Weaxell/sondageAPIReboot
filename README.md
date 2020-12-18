@@ -38,12 +38,15 @@ SpringBoot ne requiert pas de prérequis particulier, Maven s'occupera d'install
 ## Documentation de l'API
 Voici une documentation du mapping de notre API réalisée avec Swagger2 :
 - Le contrôleur d'objet SalleSondage :
+
 ![enter image description here](https://cdn.discordapp.com/attachments/648455329016709121/789598093989249064/unknown.png)
 
 - Le contrôleur d'objet Sondage :
+
 ![enter image description here](https://cdn.discordapp.com/attachments/648455329016709121/789598625105313852/unknown.png)
 
 - Le contrôleur d'objet Vote :
+
 ![enter image description here](https://cdn.discordapp.com/attachments/648455329016709121/789598826049830922/unknown.png)
 
 NB final : ce repository est la suite de celui-ci : https://github.com/Weaxell/sondageAPI
