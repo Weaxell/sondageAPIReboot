@@ -43,7 +43,7 @@ public class VoteController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(value = "/sondages/{idSondage}/voted")
-    public List<String> getSondageResultat(@PathVariable int idSondage, @RequestParam String userid) {
+    public HashMap<String, Integer> getSondageResultat(@PathVariable int idSondage, @RequestParam String userid) {
         if(sondageDao.findById(idSondage) != null ) {
             ResultatSondage resulatSondage = new ResultatSondage(sondageDao.findById(idSondage).getReponses());
 
@@ -73,7 +73,7 @@ public class VoteController {
                 }
             }
 
-            return resulatSondage.getResultatEnliste();
+            return resulatSondage.getResultat();
         }
         else
             throw new NotFoundException("Le sondage demande n'existe pas");
