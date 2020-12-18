@@ -55,17 +55,15 @@ public class SondageController {
             if(sondage.isPublic())
                 return sondage;
             // sinon, si l'utilisateur a acces a la salle ou est le sondage
-            else if(salleDao.findById(sondage.getSalleId()).getListUtilisateurs().contains(userid)) {
-                System.out.println("################### Utilisateur " + userid + "dans la liste : " + salleDao.findById(sondage.getSalleId()).getListUtilisateurs().contains(userid));
+            else if(salleDao.findById(sondage.getSalleId()).getListUtilisateurs().contains(userid))
                 return sondage;
-            }
             // sinon l'utilisateur n'a pas acces au sondage, on genere une exception UnauthorizedException
-
+            else
+                throw new UnauthorizedException("L'utilisateur n'a pas acces au sondage demande");
         }
         else {
             throw new NotFoundException("Le sondage d'id " + id + " n'existe pas");
         }
-        throw new NotFoundException("Le sondage d'id " + id + " n'existe pas");
     }
     /*
     ============ FIN MAPPING GET ============
