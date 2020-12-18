@@ -80,7 +80,7 @@ public class SalleController {
 
         // initalisation des champs ElementCollection
         salleSondage.setListUtilisateurs(new ArrayList<String>());
-        salleSondage.setListSondage(new ArrayList<Integer>());
+        salleSondage.setListIdSondage(new ArrayList<Integer>());
 
         salleSondage.addUser(userid);
         SalleSondage salleAdded = salleDao.save(salleSondage);

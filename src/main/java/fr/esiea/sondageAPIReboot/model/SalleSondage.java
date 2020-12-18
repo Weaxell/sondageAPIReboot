@@ -13,7 +13,7 @@ public class SalleSondage {
     private String idProprietaire;
 
     @ElementCollection
-    private List<Integer> listSondage;
+    private List<Integer> listIdSondage;
 
     public List<String> getListUtilisateurs() {
         return listUtilisateurs;
@@ -27,8 +27,19 @@ public class SalleSondage {
     private List<String> listUtilisateurs;
 
     public SalleSondage() {
+        /*
         if(listUtilisateurs == null)
             listUtilisateurs = new ArrayList<String>();
+         */
+    }
+
+    // constructeur de test
+    public SalleSondage(String nom, String idProprietaire) {
+        this.nom = nom;
+        this.idProprietaire = idProprietaire;
+        listIdSondage = new ArrayList<Integer>();
+        listUtilisateurs = new ArrayList<String>();
+
     }
 
     public String getIdProprietaire() {
@@ -56,15 +67,15 @@ public class SalleSondage {
     }
 
     public List<Integer> getListIdSondage() {
-        return listSondage;
+        return listIdSondage;
     }
 
     public void addSondage(int idSondage) {
-        this.listSondage.add(idSondage);
+        this.listIdSondage.add(idSondage);
     }
 
-    public void setListSondage(List<Integer> listSondage) {
-        this.listSondage = listSondage;
+    public void setListIdSondage(List<Integer> listSondage) {
+        this.listIdSondage = listSondage;
     }
 
     public void addUser(String userid) {
@@ -79,7 +90,7 @@ public class SalleSondage {
         return "SalleSondage{" +
                 "id=" + id +
                 ", nom='" + nom + '\'' +
-                ", listSondage=" + listSondage +
+                ", listSondage=" + listIdSondage +
                 '}';
     }
 }

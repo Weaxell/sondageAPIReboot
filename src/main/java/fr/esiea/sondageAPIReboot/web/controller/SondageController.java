@@ -59,6 +59,8 @@ public class SondageController {
                 System.out.println("################### Utilisateur " + userid + "dans la liste : " + salleDao.findById(sondage.getSalleId()).getListUtilisateurs().contains(userid));
                 return sondage;
             }
+            // sinon l'utilisateur n'a pas acces au sondage, on genere une exception UnauthorizedException
+
         }
         else {
             throw new NotFoundException("Le sondage d'id " + id + " n'existe pas");
@@ -115,6 +117,29 @@ public class SondageController {
     /*
     ============ FIN MAPPING POST ============
      */
+
+
+
+    /*
+    ============ DEBUT MAPPINGS PLUS PARTICULIERS (A USAGE UNIQUE, ETC... ============
+     */
+
+    @DeleteMapping(value="/sondages/{id}")
+    public void effacerSondage(@Valid @RequestBody Sondage sondage, @RequestParam("userid") String userid) {
+        Sondage sond = sondageDao.findById(sondage.getId());
+
+        // on commence par verifier que le sondage existe
+        if(sond != null) {
+            // on verifie que le demandeur de la suppression est bien son proprietaire
+            if(sond.getIdProprietaire() == userid) {
+                // on dereference le sondage dans les salles
+                for(SalleSondage salle : salleDao.findAll())
+                sondageDao.delete(sond);
+            }
+        }
+        else
+            throw new NotFoundException("Le sondage demande n'existe pas");
+    }
 
     @PutMapping(value = "/sondages")
     public void modifierSondage(@Valid @RequestBody Sondage sondage, @RequestParam("userid") String userid) {

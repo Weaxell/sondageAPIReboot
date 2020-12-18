@@ -19,10 +19,17 @@ public class Sondage {
     private String idProprietaire;
 
 
-
     public Sondage() {
     }
 
+    // constructeur de test
+    public Sondage(String titre, List<String> reponses, boolean isPublic, int idSalle, String idProprietaire) {
+        this.titre = titre;
+        this.reponses = reponses;
+        this.isPublic = isPublic;
+        this.idSalle = idSalle;
+        this.idProprietaire = idProprietaire;
+    }
 
 
     public String getIdProprietaire() {
