@@ -43,35 +43,39 @@ public class VoteController {
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(value = "/sondages/{idSondage}/voted")
     public ResultatSondage getSondageResultat(@PathVariable int idSondage, @RequestParam String userid) {
-        ResultatSondage resulatSondage = new ResultatSondage();
+        if(sondageDao.findById(idSondage) != null ) {
+            ResultatSondage resulatSondage = new ResultatSondage(sondageDao.findById(idSondage).getReponses());
 
-        Sondage sondage = sondageDao.findById(idSondage);
-        if(sondage.isPublic()) {
-            // on recupere tous les votes pour ce sondage
-            for(Vote vote : voteDao.findAll()) {
-                if(vote.getIdSondage() == idSondage) {
-                    resulatSondage.ajouterResultat(vote.getChoix(), 1);
-                }
-            }
-        }
-        else {
-            SalleSondage salle = salleDao.findById(sondage.getSalleId());
-            if(salle != null) {
-                if(salle.getListUtilisateurs().contains(userid)) {
-                    // on recupere tous les votes pour ce sondage
-                    for(Vote vote : voteDao.findAll()) {
-                        if(vote.getIdSondage() == idSondage) {
-                            resulatSondage.ajouterResultat(vote.getChoix(), 1);
-                        }
+            Sondage sondage = sondageDao.findById(idSondage);
+            if(sondage.isPublic()) {
+                // on recupere tous les votes pour ce sondage
+                for(Vote vote : voteDao.findAll()) {
+                    if(vote.getIdSondage() == idSondage) {
+                        resulatSondage.ajouterResultat(vote.getChoix(), 1);
                     }
                 }
-                else {
-                    throw new UnauthorizedException("Impossible de voir les votes : l'utilisateur n'a pas acces a ce sondage");
+            }
+            else {
+                SalleSondage salle = salleDao.findById(sondage.getSalleId());
+                if(salle != null) {
+                    if(salle.getListUtilisateurs().contains(userid)) {
+                        // on recupere tous les votes pour ce sondage
+                        for(Vote vote : voteDao.findAll()) {
+                            if(vote.getIdSondage() == idSondage) {
+                                resulatSondage.ajouterResultat(vote.getChoix(), 1);
+                            }
+                        }
+                    }
+                    else {
+                        throw new UnauthorizedException("Impossible de voir les votes : l'utilisateur n'a pas acces a ce sondage");
+                    }
                 }
             }
-        }
 
-        return resulatSondage;
+            return resulatSondage;
+        }
+        else
+            throw new NotFoundException("Le sondage demande n'existe pas");
 
     }
 

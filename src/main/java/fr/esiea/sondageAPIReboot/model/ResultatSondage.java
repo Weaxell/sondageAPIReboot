@@ -1,12 +1,16 @@
 package fr.esiea.sondageAPIReboot.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ResultatSondage {
     HashMap<String, Integer> mapResulat;
 
-    public ResultatSondage() {
+    public ResultatSondage(List<String> listChoix) {
         mapResulat = new HashMap<String, Integer>();
+        for(String choix : listChoix)
+            mapResulat.put(choix, 0);
     }
 
     public void ajouterResultat(String choix, int nbVote) {
