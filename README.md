@@ -12,7 +12,7 @@ Ce repository supporte le code de notre API RESTful qui est appelée par notre f
 SpringBoot est un framework basé sur Java pouvant être utilisé pour créer des applications Spring sous forme de microservice et/ou des API RESTful dans le but d'exposer des données.
 
 ### MySQL
-![enter image description here](https://cdn.worldvectorlogo.com/logos/mysql.svg)
+![enter image description here](https://cdn.discordapp.com/attachments/648455329016709121/789558919387152404/mysql_logo.png)
 MySQL est la base de données que nous avons utilisé. MySQL désigne en réalité un SGBD relationnel complet, ce qui nous a permis de l'interfacer facilement avec SpringBoot pour permettre de sauvegarder nos objets.
 
 ## Prérequis de fonctionnement
