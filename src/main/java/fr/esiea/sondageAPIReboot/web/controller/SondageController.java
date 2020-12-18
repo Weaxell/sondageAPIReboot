@@ -127,18 +127,20 @@ public class SondageController {
      */
 
     @CrossOrigin(origins = "http://localhost:4200")
-    @DeleteMapping(value="/sondages/{id}")
-    public void effacerSondage(@Valid @RequestBody Sondage sondage, @RequestParam("userid") String userid) {
-        Sondage sond = sondageDao.findById(sondage.getId());
+    @DeleteMapping(value="/sondages/{sondageId}")
+    public void effacerSondage(@PathVariable int sondageId, @RequestParam("userid") String userid) {
+        Sondage sond = sondageDao.findById(sondageId);
 
         // on commence par verifier que le sondage existe
         if(sond != null) {
             // on verifie que le demandeur de la suppression est bien son proprietaire
-            if(sond.getIdProprietaire() == userid) {
+            if(sond.getIdProprietaire().equals(userid)) {
                 // on dereference le sondage dans les salles
                 for(SalleSondage salle : salleDao.findAll())
                 sondageDao.delete(sond);
             }
+            else
+                throw new UnauthorizedException("L'utilisateur qui demande la suppression n'est pas le proprietaire du sondage");
         }
         else
             throw new NotFoundException("Le sondage demande n'existe pas");
