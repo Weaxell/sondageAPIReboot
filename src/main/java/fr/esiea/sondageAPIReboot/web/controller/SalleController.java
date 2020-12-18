@@ -44,24 +44,28 @@ public class SalleController {
 
     /**
      *
-     * @param id
+     * @param salleId
      * @param userid
      * @return tous les sondages de la salle dans une liste si l'utilisateur a acces a cette salle
      */
-    @GetMapping(value = "/salles/{id}")
-    public List<Sondage> getSondagesOfSalle(@PathVariable int id, @RequestParam("userid") String userid) {
+    @GetMapping(value = "/salles/{salleId}")
+    public List<Sondage> getSondagesOfSalle(@PathVariable int salleId, @RequestParam("userid") String userid) {
         List<Sondage> listSondages = new ArrayList<Sondage>();
+        SalleSondage salle = salleDao.findById(salleId);
 
-        if(salleDao.findById(id) != null)
-            if(salleDao.findById(id).getListUtilisateurs() != null && salleDao.findById(id).getListUtilisateurs().contains(userid)) {
-                for(int idsond : salleDao.findById(id).getListIdSondage())
-                    listSondages.add(sondageDao.findById(idsond));
-                return listSondages;
-            } else
-                throw new UnauthorizedException("L'utilisateur n'est pas autorise a accerder a cette salle");
-
+        // si la salle existe
+        if(salle != null) {
+            // si l'utilisateur a acces a la salle
+            if(salle.getListUtilisateurs().contains(userid)) {
+                // on ajoute a la liste tous les sondages
+                for(int idSondage : salle.getListIdSondage()) {
+                    listSondages.add(sondageDao.findById(idSondage));
+                }
+            }
+            return listSondages;
+        }
         else
-            throw new NotFoundException("Cette salle n'existe pas");
+            throw new NotFoundException("La salle demandee n'existe pas");
     }
 
     /**

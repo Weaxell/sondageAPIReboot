@@ -101,7 +101,10 @@ public class SondageController {
         if(salle != null) {
             if(salle.getListUtilisateurs().contains(userid)) {
                 sondage.setIdSalle(idSalle);
-                sondageDao.save(sondage);
+                sondage.setIdProprietaire(userid);
+                Sondage sondageAdded = sondageDao.save(sondage);
+                salle.addSondage(sondageAdded.getId());
+                salleDao.save(salle);
             }
             else
                 throw new UnauthorizedException("L'utilisateur " + userid + " n'a pas acces a la salle");
