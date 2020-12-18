@@ -48,7 +48,7 @@ public class SondageController {
      * @return un sondage specifique en fonction de son id
      */
     @GetMapping(value = "/sondages/{id}")
-    public Sondage getSondage(@PathVariable int id, @RequestParam("userid") int userid) {
+    public Sondage getSondage(@PathVariable int id, @RequestParam("userid") String userid) {
         Sondage sondage = sondageDao.findById(id);
         // si le sondage existe
         if(sondage != null) {
@@ -81,7 +81,7 @@ public class SondageController {
      * @param userid
      */
     @PostMapping(value = "/sondages")
-    public void addSondage(@Valid @RequestBody Sondage sondage, @RequestParam("userid") int userid) {
+    public void addSondage(@Valid @RequestBody Sondage sondage, @RequestParam("userid") String userid) {
         sondage.setIdProprietaire(userid);
         if(sondage.isPublic()) {
             sondage.setIdSalle(-1);
@@ -96,7 +96,7 @@ public class SondageController {
     }
 
     @PostMapping(value = "/salles/{idSalle}/newSondage")
-    public void addSondagePrive(@PathVariable int idSalle, @Valid @RequestBody Sondage sondage, @RequestParam("userid") int userid) {
+    public void addSondagePrive(@PathVariable int idSalle, @Valid @RequestBody Sondage sondage, @RequestParam("userid") String userid) {
         SalleSondage salle = salleDao.findById(idSalle);
         if(salle != null) {
             if(salle.getListUtilisateurs().contains(userid)) {
@@ -114,7 +114,7 @@ public class SondageController {
      */
 
     @PutMapping(value = "/sondages")
-    public void modifierSondage(@Valid @RequestBody Sondage sondage, @RequestParam("userid") int userid) {
+    public void modifierSondage(@Valid @RequestBody Sondage sondage, @RequestParam("userid") String userid) {
         sondage.setIdProprietaire(userid);
         // seulement le proprietaire peut changer le sondage public
         if (sondage.getIdProprietaire() == userid)

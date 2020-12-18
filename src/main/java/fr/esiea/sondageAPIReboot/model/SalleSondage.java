@@ -10,32 +10,32 @@ public class SalleSondage {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
     private String nom;
-    private int idProprietaire;
+    private String idProprietaire;
 
     @ElementCollection
     private List<Integer> listSondage;
 
-    public List<Integer> getListUtilisateurs() {
+    public List<String> getListUtilisateurs() {
         return listUtilisateurs;
     }
 
-    public void setListUtilisateurs(List<Integer> listUtilisateurs) {
+    public void setListUtilisateurs(List<String> listUtilisateurs) {
         this.listUtilisateurs = listUtilisateurs;
     }
 
     @ElementCollection
-    private List<Integer> listUtilisateurs;
+    private List<String> listUtilisateurs;
 
     public SalleSondage() {
         if(listUtilisateurs == null)
-            listUtilisateurs = new ArrayList<Integer>();
+            listUtilisateurs = new ArrayList<String>();
     }
 
-    public int getIdProprietaire() {
+    public String getIdProprietaire() {
         return idProprietaire;
     }
 
-    public void setIdProprietaire(int idProprietaire) {
+    public void setIdProprietaire(String idProprietaire) {
         this.idProprietaire = idProprietaire;
     }
 
@@ -67,9 +67,9 @@ public class SalleSondage {
         this.listSondage = listSondage;
     }
 
-    public void addUser(int userid) {
+    public void addUser(String userid) {
         if(listUtilisateurs == null)
-            listUtilisateurs = new ArrayList<Integer>();
+            listUtilisateurs = new ArrayList<String>();
         if(!listUtilisateurs.contains(userid))
             listUtilisateurs.add(userid);
     }

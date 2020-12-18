@@ -4,6 +4,8 @@ import fr.esiea.sondageAPIReboot.dao.SalleDao;
 import fr.esiea.sondageAPIReboot.dao.SondageDao;
 import fr.esiea.sondageAPIReboot.model.SalleSondage;
 import fr.esiea.sondageAPIReboot.model.Sondage;
+import fr.esiea.sondageAPIReboot.web.exceptions.NotFoundException;
+import fr.esiea.sondageAPIReboot.web.exceptions.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,10 +29,8 @@ public class SalleController {
      * @return dans une liste toutes les salles auxquelles l'utilisateur a acces
      */
     @GetMapping(value = "/salles/my")
-    public List<SalleSondage> listSalles(@RequestParam("userid") int userid) {
+    public List<SalleSondage> listSalles(@RequestParam("userid") String userid) {
         List<SalleSondage> listSalles = new ArrayList<SalleSondage>();
-
-        // System.out.println("################ Userid: " + userid);
 
         for(SalleSondage sallesond : salleDao.findAll()) {
             if(sallesond.getListUtilisateurs() != null) {
@@ -49,15 +49,19 @@ public class SalleController {
      * @return tous les sondages de la salle dans une liste si l'utilisateur a acces a cette salle
      */
     @GetMapping(value = "/salles/{id}")
-    public List<Sondage> getSondagesOfSalle(@PathVariable int id, @RequestParam("userid") int userid) {
+    public List<Sondage> getSondagesOfSalle(@PathVariable int id, @RequestParam("userid") String userid) {
         List<Sondage> listSondages = new ArrayList<Sondage>();
 
         if(salleDao.findById(id) != null)
-            if(salleDao.findById(id).getListUtilisateurs() != null && salleDao.findById(id).getListUtilisateurs().contains(userid))
+            if(salleDao.findById(id).getListUtilisateurs() != null && salleDao.findById(id).getListUtilisateurs().contains(userid)) {
                 for(int idsond : salleDao.findById(id).getListIdSondage())
                     listSondages.add(sondageDao.findById(idsond));
+                return listSondages;
+            } else
+                throw new UnauthorizedException("L'utilisateur n'est pas autorise a accerder a cette salle");
 
-        return listSondages;
+        else
+            throw new NotFoundException("Cette salle n'existe pas");
     }
 
     /**
@@ -67,11 +71,11 @@ public class SalleController {
      * @return
      */
     @PostMapping(value = "/salles")
-    public ResponseEntity<Void> addSalle(@Valid @RequestBody SalleSondage salleSondage, @RequestParam("userid") int userid) {
+    public ResponseEntity<Void> addSalle(@Valid @RequestBody SalleSondage salleSondage, @RequestParam("userid") String userid) {
         salleSondage.setIdProprietaire(userid);
 
         // initalisation des champs ElementCollection
-        salleSondage.setListUtilisateurs(new ArrayList<Integer>());
+        salleSondage.setListUtilisateurs(new ArrayList<String>());
         salleSondage.setListSondage(new ArrayList<Integer>());
 
         salleSondage.addUser(userid);
@@ -96,13 +100,19 @@ public class SalleController {
      * @param userid, useradd
      */
     @PostMapping(value = "/salles/{salleId}/adduser")
-    public void adduser(@PathVariable int salleId, @RequestParam("userid") int userid, @RequestParam("useradd") int useradd) {
-        // int idSalle = Integer.valueOf(salleId.charAt(0));
+    public void adduser(@PathVariable int salleId, @RequestParam("userid") String userid, @RequestParam("useradd") String useradd) {
         int idSalle = salleId;
-        if(salleDao.findById(idSalle).getListUtilisateurs().contains(userid)) {
-            SalleSondage salle = salleDao.findById(idSalle);
-            salle.addUser(useradd);
-            salleDao.save(salle);
+        if(salleDao.findById(idSalle) != null) {
+            if(salleDao.findById(idSalle).getListUtilisateurs().contains(userid)) {
+                SalleSondage salle = salleDao.findById(idSalle);
+                salle.addUser(useradd);
+                salleDao.save(salle);
+            }
+            else
+                throw new UnauthorizedException("Vous n'etes pas autorises a acceder a cette salle");
         }
+        else
+            throw new NotFoundException("Cette salle n'existe pas");
+
     }
 }

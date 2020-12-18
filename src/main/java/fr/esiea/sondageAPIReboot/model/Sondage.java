@@ -16,7 +16,7 @@ public class Sondage {
 
     private boolean isPublic;
     private int idSalle;
-    private int idProprietaire;
+    private String idProprietaire;
 
 
 
@@ -25,11 +25,11 @@ public class Sondage {
 
 
 
-    public int getIdProprietaire() {
+    public String getIdProprietaire() {
         return idProprietaire;
     }
 
-    public void setIdProprietaire(int idProprietaire) {
+    public void setIdProprietaire(String idProprietaire) {
         this.idProprietaire = idProprietaire;
     }
 
